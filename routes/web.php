@@ -18,6 +18,8 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
+
+    // Redirect to the dashboard
     return Inertia::render('Welcome', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
@@ -27,6 +29,8 @@ Route::get('/', function () {
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
+
+    // Decide the user's position
     Route::get('/dashboard', function () {
         if (auth()->user()->account_type === 'restaurant') {
             return Inertia::render('Dashboard');
@@ -36,8 +40,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
 
-
-    // Routes for createing restaurant dashboard
+    // Resrautaunt Admin Routes
     Route::prefix('/dashboard')->group(function () {
         Route::get('/', [RestaurantController::class, 'edit'])->name('dashboard');
         Route::post('/create', [RestaurantController::class, 'create'])->name('restaurant.create');
@@ -47,18 +50,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
-
+// Non-Restaurant Admin Routes
 Route::get("/homepage", [RestaurantController::class, 'show'])->name("home");
 
+Route::get('/restaurant', function () {
+    return Inertia::render('RestaurantMenu');
+})->name('restaurant');
+
+// Profile Routes
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-
-Route::get('/restaurant', function () {
-    return Inertia::render('RestaurantMenu');
-})->name('restaurant');
 
 require __DIR__.'/auth.php';
