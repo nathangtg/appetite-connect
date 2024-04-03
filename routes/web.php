@@ -47,6 +47,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/update', [RestaurantController::class, 'update'])->name('restaurant.update');
         Route::delete('/destroy', [RestaurantController::class, 'destroy'])->name('restaurant.destroy');
         Route::get('/{id}', [RestaurantController::class, 'restaurantSettings'])->name('restaurant.settings');
+        Route::get('/{restaurant_id}/menu', [RestaurantController::class, 'showMenuItem'])->name('restaurant.menu');
     });
 });
 

@@ -11,6 +11,8 @@ class Menu extends Model
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    protected $primaryKey = 'menu_id';
+
     protected $fillable = [
         'restaurant_id',
         'name',

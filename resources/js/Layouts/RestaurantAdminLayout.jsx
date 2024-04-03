@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import { Link } from "@inertiajs/react";
 
 export default function RestaurantAdminLayout({ children, restaurant, user }) {
     const [showSidebar, setShowSidebar] = useState(false);
@@ -25,36 +26,52 @@ export default function RestaurantAdminLayout({ children, restaurant, user }) {
                 <div className="flex items-center justify-center h-16 bg-gray-900 text-white">
                     {restaurant.name}
                 </div>
-                <ul className="py-4">
-                    <li className="px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer">
+                <div className="py-4 flex flex-col">
+                    <Link className="px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer">
                         Restaurant Settings
-                    </li>
-                    <li className="px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer">
+                    </Link>
+                    <Link className="px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer">
                         Restaurant Statistics
-                    </li>
-                    <li className="px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer">
+                    </Link>
+                    <Link className="px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer">
                         Orders
-                    </li>
+                    </Link>
+                    <Link
+                        href={`/dashboard/${restaurant.restaurant_id}/menu`}
+                        className="px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer"
+                    >
+                        Menu
+                    </Link>
+
                     {/* Add more navigation items as needed */}
-                </ul>
+                </div>
             </motion.div>
             {/* Sidebar for desktop */}
             <div className="hidden lg:flex flex-col h-screen bg-gray-800 w-48">
                 <div className="flex items-center justify-center h-16 bg-gray-900 text-white">
                     {restaurant.name}
                 </div>
-                <ul className="py-4">
-                    <li className="px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer">
+                <div className="py-4 flex flex-col">
+                    <Link
+                        href={`/dashboard/${restaurant.restaurant_id}`}
+                        className="px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer"
+                    >
                         Restaurant Settings
-                    </li>
-                    <li className="px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer">
+                    </Link>
+                    <Link className="px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer">
                         Restaurant Statistics
-                    </li>
-                    <li className="px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer">
+                    </Link>
+                    <Link className="px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer">
                         Orders
-                    </li>
+                    </Link>
+                    <Link
+                        href={`/dashboard/${restaurant.restaurant_id}/menu`}
+                        className="px-4 py-2 text-gray-300 hover:bg-gray-700 hover:text-white cursor-pointer"
+                    >
+                        Menu
+                    </Link>
                     {/* Add more navigation items as needed */}
-                </ul>
+                </div>
             </div>
             {/* Main content */}
             <div className="flex-grow bg-gray-200">

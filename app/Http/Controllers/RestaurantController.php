@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Menu;
 use App\Models\Restaurant; // Import the Restaurant model
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -79,5 +81,58 @@ class RestaurantController extends Controller
         Log::info('Restaurant settings', ['restaurant' => $restaurant]);
         return Inertia::render('RestaurantSettings', ['restaurant' => $restaurant]);
     }
+
+    // RESTAURANT MENU CRUD OPERATIONS
+    public function createMenuItem(Request $request)
+    {
+        $restaurant = Restaurant::where('restaurant_id', $request->restaurant_id)->first();
+        $menu = $restaurant->menu;
+        $menu[] = $request->all();
+        $restaurant->menu = $menu;
+        $restaurant->save();
+
+        Log::info('Menu item created', ['restaurant_id' => $restaurant->restaurant_id]);
+
+        return Redirect::route('restaurant.settings', ['id' => $restaurant->restaurant_id])->with('success', 'Menu item created successfully');
+    }
+
+    public function updateMenuItem(Request $request)
+    {
+        $restaurant = Restaurant::where('restaurant_id', $request->restaurant_id)->first();
+        $menu = $restaurant->menu;
+        $menu[$request->index] = $request->all();
+        $restaurant->menu = $menu;
+        $restaurant->save();
+
+        Log::info('Menu item updated', ['restaurant_id' => $restaurant->restaurant_id]);
+
+        return Redirect::route('restaurant.settings', ['id' => $restaurant->restaurant_id])->with('success', 'Menu item updated successfully');
+    }
+
+    public function deleteMenuItem(Request $request)
+    {
+        $restaurant = Restaurant::where('restaurant_id', $request->restaurant_id)->first();
+        $menu = $restaurant->menu;
+        unset($menu[$request->index]);
+        $restaurant->menu = array_values($menu);
+        $restaurant->save();
+
+        Log::info('Menu item deleted', ['restaurant_id' => $restaurant->restaurant_id]);
+
+        return Redirect::route('restaurant.settings', ['id' => $restaurant->restaurant_id])->with('success', 'Menu item deleted successfully');
+    }
+
+    public function showMenuItem(Request $request)
+    {
+        $restaurant = Restaurant::where('restaurant_id', $request->restaurant_id)->first();
+        if (!$restaurant) {
+            return response()->json(['error' => 'Restaurant not found'], 404);
+        }
+
+        $menuItems = Menu::where('restaurant_id', $restaurant->restaurant_id)->get();
+
+        return Inertia::render('RestaurantMenuAdmin', ['restaurant' => $restaurant, 'menuItems' => $menuItems]);
+    }
+
 
 }
