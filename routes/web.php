@@ -47,12 +47,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/update', [RestaurantController::class, 'update'])->name('restaurant.update');
         Route::delete('/destroy', [RestaurantController::class, 'destroy'])->name('restaurant.destroy');
         Route::get('/{id}', [RestaurantController::class, 'restaurantSettings'])->name('restaurant.settings');
-        Route::get('/{restaurant_id}/menu', [RestaurantController::class, 'showMenuItem'])->name('restaurant.menu');
+        Route::get('/{restaurant_id}/menu', [RestaurantController::class, 'showMenuItem'])->name('restaurant.AdminMenu');
     });
 });
 
 // Non-Restaurant Admin Routes
-Route::get("/homepage", [RestaurantController::class, 'show'])->name("home");
+Route::prefix('/homepage')->group(function () {
+    Route::get("/", [RestaurantController::class, 'show'])->name("home");
+    Route::get('/{restaurant_id}/menu', [RestaurantController::class, 'showMenu'])->name('restaurant.menu');
+});
 
 Route::get('/restaurant', function () {
     return Inertia::render('RestaurantMenu');

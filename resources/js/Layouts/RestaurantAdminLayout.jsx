@@ -9,9 +9,12 @@ export default function RestaurantAdminLayout({ children, restaurant, user }) {
         setShowSidebar(!showSidebar);
     };
 
+    // Check if User's account is registered as the restaurant User Admin
+    const isAuthorized = user && user.id === restaurant.user_id;
+
     return (
         <div className="flex">
-            {/* Sidebar for mobile */}
+            {/* Mobile Sidebar */}
             <motion.div
                 initial={{ x: "-100%", width: "0px" }}
                 animate={{
@@ -42,10 +45,10 @@ export default function RestaurantAdminLayout({ children, restaurant, user }) {
                     >
                         Menu
                     </Link>
-
                     {/* Add more navigation items as needed */}
                 </div>
             </motion.div>
+
             {/* Sidebar for desktop */}
             <div className="hidden lg:flex flex-col h-screen bg-gray-800 w-48">
                 <div className="flex items-center justify-center h-16 bg-gray-900 text-white">
@@ -73,10 +76,17 @@ export default function RestaurantAdminLayout({ children, restaurant, user }) {
                     {/* Add more navigation items as needed */}
                 </div>
             </div>
+
             {/* Main content */}
             <div className="flex-grow bg-gray-200">
-                <div className="p-4">{children}</div>
+                {/* Conditionally render children or "Not Authorized" */}
+                {isAuthorized ? (
+                    <div className="p-4">{children}</div>
+                ) : (
+                    <div className="p-4 text-red-600">Not Authorized</div>
+                )}
             </div>
+
             {/* Mobile disclosure button */}
             <motion.button
                 onClick={toggleSidebar}
@@ -85,33 +95,7 @@ export default function RestaurantAdminLayout({ children, restaurant, user }) {
                 transition={{ duration: 0.3 }}
                 className="lg:hidden fixed bottom-4 right-4 z-50 p-3 rounded-full bg-gray-800 text-white"
             >
-                {showSidebar ? (
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                    >
-                        <path
-                            fillRule="evenodd"
-                            d="M13.707 5.293a1 1 0 00-1.414 1.414L13.586 8l-1.293 1.293a1 1 0 001.414 1.414l1.822-1.822a.5.5 0 000-.707l-1.822-1.822zm-1.414 8.414a1 1 0 001.414-1.414L10.414 12l1.293-1.293a1 1 0 00-1.414-1.414L8.293 10.293a.5.5 0 000 .707l1.822 1.822zm-6.707-6.707a1 1 0 011.414-1.414L6.414 8l-1.293-1.293a1 1 0 011.414-1.414L8.293 6.293a.5.5 0 010 .707l-1.822 1.822zM3 10a7 7 0 1114 0A7 7 0 013 10zm7-6a6 6 0 100 12 6 6 0 000-12z"
-                            clipRule="evenodd"
-                        />
-                    </svg>
-                ) : (
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                    >
-                        <path
-                            fillRule="evenodd"
-                            d="M13.707 5.293a1 1 0 00-1.414 1.414L13.586 8l-1.293 1.293a1 1 0 001.414 1.414l1.822-1.822a.5.5 0 000-.707l-1.822-1.822zm-1.414 8.414a1 1 0 001.414-1.414L10.414 12l1.293-1.293a1 1 0 00-1.414-1.414L8.293 10.293a.5.5 0 000 .707l1.822 1.822zm-6.707-6.707a1 1 0 011.414-1.414L6.414 8l-1.293-1.293a1 1 0 011.414-1.414L8.293 6.293a.5.5 0 010 .707l-1.822 1.822zM3 10a7 7 0 1114 0A7 7 0 013 10zm7-6a6 6 0 100 12 6 6 0 000-12z"
-                            clipRule="evenodd"
-                        />
-                    </svg>
-                )}
+                {/* Disclosure button icon */}
             </motion.button>
         </div>
     );

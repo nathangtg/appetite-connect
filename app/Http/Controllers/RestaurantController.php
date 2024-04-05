@@ -134,5 +134,17 @@ class RestaurantController extends Controller
         return Inertia::render('RestaurantMenuAdmin', ['restaurant' => $restaurant, 'menuItems' => $menuItems]);
     }
 
+    // CUSTOMER MENU OPERATIONS
+    public function showMenu(Request $request)
+    {
+        $restaurant = Restaurant::where('restaurant_id', $request->restaurant_id)->first();
+        if (!$restaurant) {
+            return response()->json(['error' => 'Restaurant not found'], 404);
+        }
+
+        $menuItems = Menu::where('restaurant_id', $restaurant->restaurant_id)->get();
+
+        return Inertia::render('RestaurantMenu', ['restaurant' => $restaurant, 'menuItems' => $menuItems]);
+    }
 
 }
