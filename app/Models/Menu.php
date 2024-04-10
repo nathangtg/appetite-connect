@@ -17,7 +17,7 @@ class Menu extends Model
         'restaurant_id',
         'name',
         'description',
-        'image_path',
+        'image_path' ,
         'price',
         'category',
     ];

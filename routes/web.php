@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MenuController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RestaurantController;
 use Illuminate\Foundation\Application;
@@ -47,14 +48,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/update', [RestaurantController::class, 'update'])->name('restaurant.update');
         Route::delete('/destroy', [RestaurantController::class, 'destroy'])->name('restaurant.destroy');
         Route::get('/{id}', [RestaurantController::class, 'restaurantSettings'])->name('restaurant.settings');
-        Route::get('/{restaurant_id}/menu', [RestaurantController::class, 'showMenuItem'])->name('restaurant.AdminMenu');
+
+        // Menu CRUD Operations
+        Route::get('/{restaurant_id}/menu', [MenuController::class, 'showMenuItem'])->name('restaurant.AdminMenu');
+        Route::post('/{restaurant_id}/menu/{menu_id}', [MenuController::class, 'updateMenuItem'])->name('restaurant.updateMenuItem');
+        Route::post('/{restaurant_id}/menu', [MenuController::class, 'createMenuItem'])->name('restaurant.createMenuItem');
+        Route::delete('/{restaurant_id}/menu/{menu_id}', [MenuController::class, 'destroyMenuItem'])->name('restaurant.destroyMenuItem');
     });
 });
 
 // Non-Restaurant Admin Routes
 Route::prefix('/homepage')->group(function () {
     Route::get("/", [RestaurantController::class, 'show'])->name("home");
-    Route::get('/{restaurant_id}/menu', [RestaurantController::class, 'showMenu'])->name('restaurant.menu');
+    Route::get('/{restaurant_id}/menu', [MenuController::class, 'showMenu'])->name('restaurant.menu');
 });
 
 Route::get('/restaurant', function () {
@@ -67,6 +73,8 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+
 
 
 require __DIR__.'/auth.php';
