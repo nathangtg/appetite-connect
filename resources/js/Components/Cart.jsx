@@ -1,6 +1,27 @@
 import React from "react";
+import { useForm } from "@inertiajs/react";
 
-export default function Cart({ items, incrementItem }) {
+export default function Cart({ items, incrementItem, user, restaurant }) {
+    const {
+        data,
+        setData,
+        post,
+        processing,
+        errors,
+        reset,
+        recentlySuccessful,
+    } = useForm({
+        items: items.filter((item) => item.quantity > 0),
+        customer_id: user.id,
+        items: items.map((item) => ({
+            name: item.title,
+            menu_id: item.menu_id,
+            quantity: item.quantity,
+            total: item.quantity * item.price,
+        })),
+        status: "Pending",
+    });
+
     // Function to check if an item with a given ID exists in the cart
     const itemExists = (itemId) => {
         return items.some((item) => item.id === itemId);
@@ -29,9 +50,34 @@ export default function Cart({ items, incrementItem }) {
     ); // Using toFixed to round to 2 decimal places and then convert back to number
 
     // Function to handle placing the order
-    const placeOrder = () => {
-        // Implement logic to place the order here
+    const placeOrder = (e) => {
         console.log("Order placed!");
+
+        e.preventDefault();
+        const orderData = {
+            items: items.filter((item) => item.quantity > 0), // Filter out items with quantity less than or equal to 0
+            user_id: user.id, // Assuming user object contains user information
+            restaurant_id: restaurant.restaurant_id, // Assuming restaurant object contains restaurant information
+            total_price: totalPrice,
+            items: items.map((item) => ({
+                name: item.title,
+                menu_id: item.menu_id,
+                quantity: item.quantity,
+                total: item.quantity * item.price,
+            })),
+            status: "Pending",
+            total: totalPrice,
+        };
+
+        console.log(orderData);
+
+        // Send order data to the server
+        post(
+            route("orders.createOrder", {
+                restaurant_id: restaurant.restaurant_id,
+            }),
+            orderData
+        );
     };
 
     return (

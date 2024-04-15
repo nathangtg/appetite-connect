@@ -3,7 +3,7 @@ import MenuCard from "@/Components/MenuCard";
 import RestaurantLayout from "@/Layouts/RestaurantLayout";
 import Cart from "@/Components/Cart";
 
-export default function RestaurantMenu({ restaurant, menuItems }) {
+export default function RestaurantMenu({ restaurant, menuItems, auth, cart }) {
     const [cartItems, setCartItems] = useState([]);
     const [showCart, setShowCart] = useState(false);
 
@@ -84,7 +84,11 @@ export default function RestaurantMenu({ restaurant, menuItems }) {
             </div>
             <div className="flex justify-center">
                 {cartItemsWithQuantity.length > 0 ? (
-                    <Cart items={cartItemsWithQuantity} />
+                    <Cart
+                        user={auth.user}
+                        restaurant={restaurant}
+                        items={cartItemsWithQuantity}
+                    />
                 ) : (
                     <p>Your cart is empty.</p>
                 )}

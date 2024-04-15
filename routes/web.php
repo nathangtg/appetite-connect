@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RestaurantController;
 use Illuminate\Foundation\Application;
@@ -54,6 +55,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/{restaurant_id}/menu/{menu_id}', [MenuController::class, 'updateMenuItem'])->name('restaurant.updateMenuItem');
         Route::post('/{restaurant_id}/menu', [MenuController::class, 'createMenuItem'])->name('restaurant.createMenuItem');
         Route::delete('/{restaurant_id}/menu/{menu_id}', [MenuController::class, 'destroyMenuItem'])->name('restaurant.destroyMenuItem');
+
+        // Order CRUD Operations
+        Route::get('/{restaurant_id}/orders', [OrderController::class, 'showOrders'])->name('orders.showOrders');
+        Route::post('/{restaurant_id}/orders/created', [OrderController::class, 'createOrder'])->name('orders.createOrder');
+        Route::delete('/{restaurant_id}/orders/{order_id}', [OrderController::class, 'destroyOrder'])->name('orders.destroyOrder');
     });
 });
 
