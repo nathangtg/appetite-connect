@@ -8,6 +8,8 @@ export default function RestaurantMenu({ restaurant, menuItems, auth, cart }) {
     const [showCart, setShowCart] = useState(false);
 
     const handleQuantityChange = (itemId, quantity) => {
+        console.log("Item ID: ", itemId, "Item quantity: ", quantity);
+
         // Find the index of the item in the cart
         const itemIndex = cartItems.findIndex(
             (item) => item.menu_id === itemId
@@ -15,11 +17,12 @@ export default function RestaurantMenu({ restaurant, menuItems, auth, cart }) {
 
         if (itemIndex !== -1) {
             // If the item exists in the cart, update its quantity
-            const updatedCartItems = [...cartItems];
-            updatedCartItems[itemIndex] = {
-                ...updatedCartItems[itemIndex],
-                quantity: quantity,
-            };
+            const updatedCartItems = cartItems.map((item) => {
+                if (item.menu_id === itemId) {
+                    return { ...item, quantity: quantity };
+                }
+                return item;
+            });
             setCartItems(updatedCartItems);
         } else if (quantity > 0) {
             // If the item doesn't exist in the cart and the quantity is greater than 0, add it to the cart
@@ -35,19 +38,27 @@ export default function RestaurantMenu({ restaurant, menuItems, auth, cart }) {
         setShowCart(!showCart);
     };
 
+    // ! FIXME: Payload differs with expected payload, Payload only sends a singular object despite multiples are sent from the front-end
+    // ! Output: {id: 4, title: "Naaaaan", description: "Nope Butetr", price: 155, imageSrc: null, quantity: 1}
+    // ! Expected: {id: 4, title: "Naaaaan", description: "Nope Butetr", price: 155, imageSrc: null, total_price: 310, quantity: 2}
+    // ! START FIXME START FIXME START FIXME
     const cartItemsData = menuItems.map((item) => {
-        const cartItem = cartItems.find(
+        const currentCartItem = cartItems.find(
             (cartItem) => cartItem.menu_id === item.menu_id
         );
         return {
-            id: item.menu_id, // Use menu_id as the id
+            id: item.menu_id,
             title: item.name,
             description: item.description,
             price: item.price,
-            imageSrc: item.image_path, // Use image_path as the imageSrc
-            quantity: cartItem ? cartItem.quantity : 0,
+            imageSrc: item.image_path,
+            total_price:
+                item.price * (currentCartItem ? currentCartItem.quantity : 0),
+            quantity: currentCartItem ? currentCartItem.quantity : 0,
         };
     });
+    // ! END FIXME END FIXME END FIXME
+    // ! END FIXME END FIXME END FIXME
 
     const cartItemsWithQuantity = cartItemsData.filter(
         (item) => item.quantity > 0
@@ -88,6 +99,9 @@ export default function RestaurantMenu({ restaurant, menuItems, auth, cart }) {
                         user={auth.user}
                         restaurant={restaurant}
                         items={cartItemsWithQuantity}
+                        cartItems={cartItems}
+                        cartItemsWithQuantity={cartItemsWithQuantity}
+                        incrementItem={handleQuantityChange}
                     />
                 ) : (
                     <p>Your cart is empty.</p>

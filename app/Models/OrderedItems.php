@@ -9,6 +9,8 @@ class OrderedItems extends Model
 {
     use HasFactory;
 
+    protected $table = 'order_items'; // Specify the custom table name
+
     protected $fillable = [
         'order_id',
         'menu_id',

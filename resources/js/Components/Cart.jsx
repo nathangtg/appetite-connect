@@ -1,27 +1,13 @@
 import React from "react";
 import { useForm } from "@inertiajs/react";
 
-export default function Cart({ items, incrementItem, user, restaurant }) {
-    const {
-        data,
-        setData,
-        post,
-        processing,
-        errors,
-        reset,
-        recentlySuccessful,
-    } = useForm({
-        items: items.filter((item) => item.quantity > 0),
-        customer_id: user.id,
-        items: items.map((item) => ({
-            name: item.title,
-            menu_id: item.menu_id,
-            quantity: item.quantity,
-            total: item.quantity * item.price,
-        })),
-        status: "Pending",
-    });
-
+export default function Cart({
+    items,
+    incrementItem,
+    user,
+    restaurant,
+    cartItemsWithQuantity,
+}) {
     // Function to check if an item with a given ID exists in the cart
     const itemExists = (itemId) => {
         return items.some((item) => item.id === itemId);
@@ -40,38 +26,58 @@ export default function Cart({ items, incrementItem, user, restaurant }) {
     // Calculate total price
     const totalPrice = Number(
         items
-            .filter((item) => item.quantity > 0) // Filter out items with quantity less than or equal to 0
+            .filter((item) => item.quantity > 0)
             .reduce(
                 (total, item) =>
                     total + parseFloat(item.quantity) * parseFloat(item.price),
                 0
             )
             .toFixed(2)
-    ); // Using toFixed to round to 2 decimal places and then convert back to number
+    );
+
+    const {
+        data,
+        setData,
+        post,
+        processing,
+        errors,
+        reset,
+        recentlySuccessful,
+    } = useForm({
+        items: items
+            .filter((item) => item.quantity > 0)
+            .map((item) => ({
+                id: item.id,
+                title: item.title,
+                description: item.description,
+                price: item.total_price,
+                imageSrc: item.imageSrc,
+                quantity: item.quantity,
+            })),
+        customer_id: user.id,
+        total_price: totalPrice,
+        status: "Pending",
+    });
 
     // Function to handle placing the order
     const placeOrder = (e) => {
         console.log("Order placed!");
-
         e.preventDefault();
+
         const orderData = {
-            items: items.filter((item) => item.quantity > 0), // Filter out items with quantity less than or equal to 0
-            user_id: user.id, // Assuming user object contains user information
-            restaurant_id: restaurant.restaurant_id, // Assuming restaurant object contains restaurant information
-            total_price: totalPrice,
-            items: items.map((item) => ({
-                name: item.title,
-                menu_id: item.menu_id,
-                quantity: item.quantity,
-                total: item.quantity * item.price,
-            })),
+            user_id: user.id,
+            restaurant_id: restaurant.restaurant_id,
             status: "Pending",
+            items: cartItemsWithQuantity.map((item) => ({
+                menu_id: item.id,
+                quantity: item.quantity,
+                total_price: formatPrice(item.quantity * item.price),
+            })),
             total: totalPrice,
         };
 
-        console.log(orderData);
+        console.log("Orders: ", orderData);
 
-        // Send order data to the server
         post(
             route("orders.createOrder", {
                 restaurant_id: restaurant.restaurant_id,

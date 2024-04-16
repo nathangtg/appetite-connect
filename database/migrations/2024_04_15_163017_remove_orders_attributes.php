@@ -24,7 +24,7 @@ return new class extends Migration
         }
 
         Schema::table('orders', function (Blueprint $table) {
-            $table->dropColumn(['name', 'quantity', 'menu_id', 'total']);
+            $table->dropColumn(['name', 'quantity', 'menu_id', ]);
         });
     }
 
